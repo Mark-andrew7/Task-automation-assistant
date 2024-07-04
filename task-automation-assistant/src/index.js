@@ -46,11 +46,15 @@ resolver.define('update-Jira-Issue', async (req) => {
         headers: {
             'Content-Type': 'application/json',
             'Accept': 'application/json',
-        }
-
-        
-        
+        }        
     }) 
+
+    if (!response.ok) {
+        const errrorMessage = await response.text()
+        throw new error(`Failed to create new issue ${errorMessage}`)
+    }
+
+    return {body: `Issue updated ${issueKey}`};
 })
 
 export const handler = resolver.getDefinitions();
