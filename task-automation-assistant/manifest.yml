@@ -4,7 +4,7 @@ modules:
       resource: main
       resolver:
         function: resolver
-      title: task-automation-assistant
+      title: Forge app for Task Automation
   function:
     - key: resolver
       handler: index.handler
@@ -15,3 +15,23 @@ app:
   runtime:
     name: nodejs18.x
   id: ari:cloud:ecosystem::app/52609c4f-7a0b-45b4-86ec-77479e783864
+
+trigger:
+  - key: issue-created-trigger
+    events:
+      - 'jira:issue_created'
+      - 'jira:issue_updated'
+      - 'jira:issue_deleted'
+      - 'jira:issue_property_set'
+      - 'jira:issue_property_deleted'
+      - 'jira:issue_link_created'
+      - 'jira:issue_link_deleted'
+
+permissions:
+  scopes:
+    - read:jira-work
+    - write:jira-work
+    - read:connect-jira
+    - write:connect-jira
+    - read:connect-rest-api
+    - write:connect-rest-api
