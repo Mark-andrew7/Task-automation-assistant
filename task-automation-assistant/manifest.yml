@@ -1,0 +1,17 @@
+modules:
+  jira:globalPage:
+    - key: task-automation-assistant-hello-world-page
+      resource: main
+      resolver:
+        function: resolver
+      title: task-automation-assistant
+  function:
+    - key: resolver
+      handler: index.handler
+resources:
+  - key: main
+    path: static/hello-world/build
+app:
+  runtime:
+    name: nodejs18.x
+  id: ari:cloud:ecosystem::app/52609c4f-7a0b-45b4-86ec-77479e783864
