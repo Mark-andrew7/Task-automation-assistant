@@ -37,5 +37,21 @@ resolver.define('createJiraIssue', async (req) => {
     return {body: `Issue created: ${issue.key}`}
 })
 
+resolver.define('update-Jira-Issue', async (req) => {
+    const {issueKey, fieldToUpdate } = req.payload
+
+    const response = await api.asApp().requestJira(route`/rest/api/3/${issueKey}`, {
+        method: 'PUT',
+        body: JSON.stringify({ fields: fieldsToUpdate }),
+        headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+        }
+
+        
+        
+    }) 
+})
+
 export const handler = resolver.getDefinitions();
 
