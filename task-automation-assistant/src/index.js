@@ -1,13 +1,7 @@
 import Resolver from '@forge/resolver';
-import { api, route } from '@forge/api';
+import api, { route } from '@forge/api';
 
 const resolver = new Resolver();
-
-resolver.define('getText', (req) => {
-    console.log(req);
-
-    return 'Hello world!';
-});
 
 resolver.define('createJiraIssue', async (req) => {
     const {projectKey, summary, description} = req.payload;
@@ -37,7 +31,7 @@ resolver.define('createJiraIssue', async (req) => {
     return {body: `Issue created: ${issue.key}`}
 })
 
-resolver.define('update-Jira-Issue', async (req) => {
+resolver.define('updateJiraIssue', async (req) => {
     const {issueKey, fieldToUpdate } = req.payload
 
     const response = await api.asApp().requestJira(route`/rest/api/3/${issueKey}`, {
@@ -56,6 +50,49 @@ resolver.define('update-Jira-Issue', async (req) => {
 
     return {body: `Issue updated ${issueKey}`};
 })
+
+// Get available transitions for an issue
+resolver.define('getIssueTransitions', async (req) => {
+    const {issueKey} = req.payload;
+
+    const response = await api.asApp().requestJira(route`/rest/api/3/issue/${issueKey}/transitions`, {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    })
+
+    if (!response.ok) {
+        const errorMessage = await response.text()
+        throw new Error(`Failed to get issue transitions ${issueKey}`)
+    }
+
+    const transitions = await response.json();
+    return transitions;
+})
+
+
+resolver.define('transitionIssue', async (req) => {
+    const {issueKey, transitionId} = req.payload;
+
+    const response = await api.asApp().requestJira(route`/rest/api/3/issue/${issueKey}/transitions`, {
+        method: 'POST',
+        body: JSON.stringify({
+            transition: {id: transitionId}
+        }),
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    })
+
+    if (!response.ok) {
+        const errorMessage = await response.text()
+        throw new Error(`Failed to transition issue: ${errorMessage}`)
+    }
+
+    return {body: `Issue ${issueKey} transitioned successfully`}
+})
+
 
 export const handler = resolver.getDefinitions();
 
