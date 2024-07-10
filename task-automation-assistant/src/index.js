@@ -1,5 +1,6 @@
 import Resolver from '@forge/resolver';
 import api, { route } from '@forge/api';
+import fetch from 'node-fetch';
 
 const resolver = new Resolver();
 
@@ -93,6 +94,32 @@ resolver.define('transitionIssue', async (req) => {
     return {body: `Issue ${issueKey} transitioned successfully`}
 })
 
+resolver.define('sendSlackNotification', async (req) => {
+    const {webhookUrl, message} = req.payload;
+
+    const payload = {
+        text: message
+    };
+
+    try {
+        const response = await fetch(webhookUrl, {
+            method: 'POST',
+            body: JSON.stringify(payload),
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+
+        if (!response.ok) {
+            const errorMessage = await response.text()
+            throw new Error(`Failed to send slack notification: ${errorMessage}`)
+        }
+
+        return {body: 'Slack notification sent successfully'}
+    } catch (error) {
+        throw new Error(`Failed to send slack notification: ${error.message}`)
+    }
+})
 
 export const handler = resolver.getDefinitions();
 

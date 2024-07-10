@@ -15,7 +15,6 @@ app:
   runtime:
     name: nodejs18.x
   id: ari:cloud:ecosystem::app/52609c4f-7a0b-45b4-86ec-77479e783864
-  key: com.alx.task-automation-assistant
 
 permissions:
   scopes:
