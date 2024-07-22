@@ -11,6 +11,8 @@ modules:
 resources:
   - key: main
     path: static/hello-world/build
+  - key: eula
+    path: static
 app:
   runtime:
     name: nodejs18.x
